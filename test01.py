@@ -24,8 +24,8 @@ def autoRetryHttpRequest(link,times=5):
 
 class Imgpp:
     def __init__(self,imgpageurl):
-        self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
-        #self.req_content=imgpageurl
+        #self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
+        self.req_content=imgpageurl
         self.decoded_content=self.req_content.decode('utf-8')
         self.soup=BeautifulSoup(self.decoded_content)
         self.get_info()
@@ -56,6 +56,11 @@ class Postpp:
         self.get_related_page()
 
     def get_post_list(self):
+        for sc in self.soup.find_all('script', type="text/javascript"):
+            if sc.text.find('Post.register') !=-1 :   
+                self.poolcc=[json.loads(x) for x in re.findall('Post.register[(]([{].+[}])[)]',sc.text)]
+
+        '''
         self.post_list=[]
         for li in self.soup.find('ul',id="post-list-posts").find_all('li'):
             if li.find('span',class_="plid") :
@@ -66,7 +71,7 @@ class Postpp:
                 self.post_list[-1]['preview_url'   ]=li.find('img',class_="preview")['src']   #full path
                 self.post_list[-1]['preview_width' ]=li.find('img',class_="preview")['width']
                 self.post_list[-1]['preview_height']=li.find('img',class_="preview")['height']
-
+        '''
     def get_related_page(self):
         self.next_page=None
         self.preview_page=None
@@ -90,18 +95,21 @@ class Poolpp:
     def get_pool_list(self):
         self.pool_post_list=[]
         for sc in self.soup.find_all('script', type="text/javascript"):
-            key_words='Post.register_resp('
-            if sc.text.find('Post.register_resp') !=-1 :                
-                self.poolcc=json.loads( sc.text[sc.text.find(key_words)+len(key_words):-3] )
-        
+            if sc.text.find('Post.register_resp') !=-1 :   
+                self.poolcc=json.loads( re.findall('Post.register_resp[(]([{].+[}])[)];',sc.text)[0] )             
 
 
-
-
-
-iurl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\Cinderella★time  yande_re.htm'
-with open(iurl,'rb') as bf:
+poolurl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\Cinderella★time  yande_re.htm'
+with open(poolurl,'rb') as bf:
     icont=bf.read()
+    poolt=Poolpp(icont)
 
-#iurl=r'https://yande.re/post/show/332138'
-tt=Poolpp(icont)
+imgurl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\img#303561  yande_re.htm'
+with open(imgurl,'rb') as bf:
+    icont=bf.read()
+    imgt=Imgpp(icont)
+
+posturl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\-  Page 2  yande_re.htm'
+with open(posturl,'rb') as bf:
+    icont=bf.read()
+    postt=Postpp(icont)
