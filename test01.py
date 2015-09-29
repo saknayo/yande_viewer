@@ -1,14 +1,10 @@
 #meo.py
 import re
 import httplib2
-import socks
-#socks.setdefaultproxy(socks.PROXY_TYPE_HTTP, '127.0.0.1', 1080)
-#socks.wrapmodule(httplib2)
-#socket.socket =socks.socksocket
 import time
 import os.path,os
 from bs4 import BeautifulSoup
-#http = httplib2.Http(proxy_info = httplib2.ProxyInfo(socks.PROXY_TYPE_HTTP, 'http://127.0.0.1', 1080))
+
 http = httplib2.Http()
 def autoRetryHttpRequest(link,times=5):
     header = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0'}
@@ -23,9 +19,6 @@ def autoRetryHttpRequest(link,times=5):
             continue
         else:
             return response,content
-
-
-#soup=BeautifulSoup(open('#324063_yande_re.htm',encoding='utf-8'))
 
 class Imgpp:
     def __init__(self,imgpageurl):
@@ -59,5 +52,5 @@ iurl=r'C:\Python34\pack\GUI\picbro\001\#324063_yande_re.htm'
 with open(iurl,'rb') as bf:
     icont=bf.read()
 
-iurl=r'https://yande.re/post/show/332138'
+#iurl=r'https://yande.re/post/show/332138'
 tt=Imgpp(iurl)
