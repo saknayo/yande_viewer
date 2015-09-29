@@ -86,16 +86,13 @@ class Poolpp:
         self.decoded_content=self.req_content.decode('utf-8')
         self.soup=BeautifulSoup(self.decoded_content)
         self.get_pool_list()
-        #self.get_related_page()
-    def get_pool_title(self):
-        
-    	pass
+
     def get_pool_list(self):
         self.pool_post_list=[]
         for sc in self.soup.find_all('script', type="text/javascript"):
-            #print(120)
-            if sc.text.find('Post.register_resp') !=-1 :
-                self.poolcc=json.loads( sc.text[sc.text.find('Post.register_resp(')+len('Post.register_resp('):-3] )
+            key_words='Post.register_resp('
+            if sc.text.find('Post.register_resp') !=-1 :                
+                self.poolcc=json.loads( sc.text[sc.text.find(key_words)+len(key_words):-3] )
         
 
 
