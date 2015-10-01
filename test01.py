@@ -23,13 +23,17 @@ def autoRetryHttpRequest(link,times=5):
             return response,content
 
 class Imgpp:
-    def __init__(self,imgpageurl):
-        #self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
-        self.req_content=imgpageurl
+    def __init__(self,imgpageurl,window_=None):
+        self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
+        #self.req_content=imgpageurl
         self.decoded_content=self.req_content.decode('utf-8')
         self.soup=BeautifulSoup(self.decoded_content)
         self.get_info()
         self.get_related_posts()
+        self.window=window_
+
+        if self.window :
+            self.update_displayed_info()
 
 
     def get_info(self):
@@ -46,10 +50,17 @@ class Imgpp:
             if a.text.find('Next')!=-1 :
                 self.next=a['href']
 
+    def update_displayed_info(self):
+        self.window.update(self.imginfo)
+        pass
+
+    def go_next_img(self,mode='default'):
+        self.window.current_object=Imgpp(self.next,self.window)
+
 class Postpp:
     def __init__(self,imgpageurl):
-        #self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
-        self.req_content=imgpageurl
+        self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
+        #self.req_content=imgpageurl
         self.decoded_content=self.req_content.decode('utf-8')
         self.soup=BeautifulSoup(self.decoded_content)
         self.get_post_list()
@@ -86,8 +97,8 @@ class Postpp:
 
 class Poolpp:
     def __init__(self,imgpageurl):
-        #self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
-        self.req_content=imgpageurl
+        self.req_status,self.req_content=autoRetryHttpRequest(imgpageurl)
+        #self.req_content=imgpageurl
         self.decoded_content=self.req_content.decode('utf-8')
         self.soup=BeautifulSoup(self.decoded_content)
         self.get_pool_list()
@@ -99,17 +110,29 @@ class Poolpp:
                 self.poolcc=json.loads( re.findall('Post.register_resp[(]([{].+[}])[)];',sc.text)[0] )             
 
 
-poolurl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\Cinderella★time  yande_re.htm'
-with open(poolurl,'rb') as bf:
+poolurl=r'https://yande.re/pool/show/3875'
+poolt=Poolpp(poolurl)
+
+imgurl=r'https://yande.re/post/show/332370'
+imgt=Imgpp(imgurl)
+
+posturl=r'https://yande.re/post'
+postt=Postpp(posturl)
+
+
+'''
+poolfile=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\Cinderella-time  yande_re.htm'
+with open(poolfile,'rb') as bf:
     icont=bf.read()
     poolt=Poolpp(icont)
 
-imgurl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\img#303561  yande_re.htm'
-with open(imgurl,'rb') as bf:
+imgfile=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\img#303561  yande_re.htm'
+with open(imgfile,'rb') as bf:
     icont=bf.read()
     imgt=Imgpp(icont)
 
-posturl=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\-  Page 2  yande_re.htm'
-with open(posturl,'rb') as bf:
+postfile=r'C:\APP_O\python3\GUI\yande_viewer\yande_viewer\-  Page 2  yande_re.htm'
+with open(postfile,'rb') as bf:
     icont=bf.read()
     postt=Postpp(icont)
+'''
